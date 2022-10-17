@@ -1,48 +1,59 @@
 package Ej3;
 
 import java.io.*;
+import java.util.Scanner;
 
 public class Lanzador {
+    final String CLASE_EJECUTAR = "Cadenas";
     public static void main(String[] args) throws IOException {
-        String JAVA_FILE_LOCATION = "C:\\Users\\manana\\PSP\\src\\Ej3\\Cadenas.java";
-        String[] command = {"javac", JAVA_FILE_LOCATION};
-
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-
-        Process process = processBuilder.start();
-        /*
-         * Check if any errors or compilation errors encounter then print on Console.
-         */
-
-        if (process.getErrorStream().read() != -1) {
-            print("Compilation Errors", process.getErrorStream());
-        }
-    /*
-    Check if javac process execute successfully or Not
-     0 - successful
-    */
-        if (process.exitValue() == 0) {
-            process = new ProcessBuilder(new String[]{"java", "-cp", "C:\\Users\\manana\\PSP\\", "Cadenas"}).start();
-    /* Check if RuntimeException or Errors encounter during execution then print errors on console
-    Otherwise print Output
-    */
-            if (process.getErrorStream().read() != -1) {
-                print("Errors ", process.getErrorStream());
-            } else {
-                print("Output ", process.getInputStream());
+        try {
+            System.out.println("RUTA: " + System.getProperty("user.dir"));
+            Lanzador prog = new Lanzador();
+            for (int i = 0; i < Integer.parseInt(args[0]); i++) {
+                prog.creaCad(args[1]);
+                System.out.println("Finalizado programa principal");
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+    public void creaCad(String ncad) throws IOException,
+            InterruptedException {
 
-    private static void print(String status, InputStream input) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(input));
-        System.out.println("************* " + status + "***********************");
-        String line = null;
-        while ((line = in.readLine()) != null) {
-            System.out.println(line);
-        }
-        in.close();
+        String[] command = {
+                "java",
+                "-classpath",
+                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
+                "Ej3." + CLASE_EJECUTAR,
+                ncad
+        };
+
+        System.out.println("Ejecutando ... \n" + String.join(" ", command));
+        ProcessBuilder pb = new ProcessBuilder(command);
+
+        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
+        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
+
+        System.out.println("Comando lanzado");
+        Process process = pb.start();
+        System.out.println("Esperando resultado ...");
+        //int errCode = process.waitFor();
+        //System.out.println("Ejecutada aplicación. Código error (valor devuelto) = " + errCode);
+
+        System.out.println("SALIDA:\n" + output(process.getInputStream()));
     }
-
+    private static String output(InputStream inputStream) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(inputStream));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + System.getProperty("line.separator"));
+            }
+        } finally {
+            br.close();
+        }
+        return sb.toString();
+    }
 }
