@@ -1,19 +1,15 @@
 package Ej4;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Scanner;
 
 public class Frecuencia {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int a = 0, e = 0, i = 0, o = 0, u = 0;
         Scanner input = new Scanner(System.in);
         StringBuilder palabra = new StringBuilder();
         while (input.hasNext()){
             palabra.append(input.nextLine());
         }
-        char c;
         for (int j = 0; j < palabra.length(); j++) {
             if (palabra.charAt(j) == 'a') {
                 a++;

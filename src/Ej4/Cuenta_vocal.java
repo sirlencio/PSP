@@ -7,21 +7,44 @@ public class Cuenta_vocal {
     static final String CLASE1_EJECUTAR = "Cadenas";
     static final String CLASE2_EJECUTAR = "Frecuencia";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         try {
             System.out.println("RUTA: " + System.getProperty("user.dir"));
             Cuenta_vocal prog = new Cuenta_vocal();
             prog.creaCad(args[1]);
-            System.out.println("Finalizado programa principal");
+            System.out.println("Cadenas creadas");
             leeVocal(args[0].charAt(0));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void leeVocal(char vocal) throws IOException,
-            InterruptedException {
+    public void creaCad(String ncad) throws IOException, InterruptedException {
+        String[] command = {
+                "java",
+                "-classpath",
+                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
+                "Ej4." + CLASE1_EJECUTAR,
+                ncad
+        };
 
+        File arc = new File("texto.txt");
+        arc.createNewFile();
+
+        System.out.println("Ejecutando ... \n" + String.join(" ", command));
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectOutput(arc);
+
+        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
+        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
+
+        System.out.println("Comando lanzado");
+        Process process = pb.start();
+        System.out.println("Esperando resultado ...");
+        int errCode = process.waitFor();
+        System.out.println("Ejecutada aplicación. Código error (valor devuelto) = " + errCode);
+    }
+    public static void leeVocal(char vocal) throws IOException, InterruptedException {
         String[] command = {
                 "java",
                 "-classpath",
@@ -43,7 +66,6 @@ public class Cuenta_vocal {
         System.out.println("Esperando resultado ...");
         int errCode = process.waitFor();
         System.out.println("Ejecutada aplicación. Código error (valor devuelto) = " + errCode);
-
 
         String[] parts = output(process.getInputStream()).split("\n");
 
@@ -69,34 +91,6 @@ public class Cuenta_vocal {
         String linea;
         while ((linea = br.readLine()) != null)
             System.out.println(linea);
-    }
-
-    public void creaCad(String ncad) throws IOException,
-            InterruptedException {
-
-        String[] command = {
-                "java",
-                "-classpath",
-                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
-                "Ej4." + CLASE1_EJECUTAR,
-                ncad
-        };
-
-        File arc = new File("texto.txt");
-        arc.createNewFile();
-
-        System.out.println("Ejecutando ... \n" + String.join(" ", command));
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectOutput(arc);
-
-        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
-        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
-
-        System.out.println("Comando lanzado");
-        Process process = pb.start();
-        System.out.println("Esperando resultado ...");
-        int errCode = process.waitFor();
-        System.out.println("Ejecutada aplicación. Código error (valor devuelto) = " + errCode);
     }
 
     private static String output(InputStream inputStream) throws IOException {

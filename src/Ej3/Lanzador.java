@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Lanzador {
     final String CLASE_EJECUTAR = "Cadenas";
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         try {
             System.out.println("RUTA: " + System.getProperty("user.dir"));
             Lanzador prog = new Lanzador();
@@ -17,8 +17,7 @@ public class Lanzador {
             e.printStackTrace();
         }
     }
-    public void creaCad(String ncad) throws IOException,
-            InterruptedException {
+    public void creaCad(String ncad) throws IOException {
 
         String[] command = {
                 "java",
