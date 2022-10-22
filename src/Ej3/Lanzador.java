@@ -1,7 +1,6 @@
 package Ej3;
 
 import java.io.*;
-import java.util.Scanner;
 
 public class Lanzador {
     final String CLASE_EJECUTAR = "Cadenas";
@@ -22,7 +21,7 @@ public class Lanzador {
         String[] command = {
                 "java",
                 "-classpath",
-                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
+                "C:\\temp\\PSP\\out\\production\\PSP",
                 "Ej3." + CLASE_EJECUTAR,
                 ncad
         };
@@ -30,8 +29,8 @@ public class Lanzador {
         System.out.println("Ejecutando ... \n" + String.join(" ", command));
         ProcessBuilder pb = new ProcessBuilder(command);
 
-        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
-        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
+        System.out.println("\nDirectorio trabajo: " + "C:\\temp\\PSP\\out\\production\\PSP");
+        pb.directory(new File("C:\\temp\\PSP\\out\\production\\PSP"));
 
         System.out.println("Comando lanzado");
         Process process = pb.start();

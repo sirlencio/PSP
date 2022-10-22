@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PSP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PSP_jar</output-path>
+    <root id="archive" name="PSP.jar">
+      <element id="module-output" name="PSP" />
+    </root>
+  </artifact>
+</component>

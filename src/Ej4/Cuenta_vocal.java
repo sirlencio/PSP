@@ -23,7 +23,7 @@ public class Cuenta_vocal {
         String[] command = {
                 "java",
                 "-classpath",
-                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
+                "C:\\temp\\PSP\\out\\production\\PSP",
                 "Ej4." + CLASE1_EJECUTAR,
                 ncad
         };
@@ -35,8 +35,8 @@ public class Cuenta_vocal {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectOutput(arc);
 
-        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
-        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
+        System.out.println("\nDirectorio trabajo: " + "C:\\temp\\PSP\\out\\production\\PSP");
+        pb.directory(new File("C:\\temp\\PSP\\out\\production\\PSP"));
 
         System.out.println("Comando lanzado");
         Process process = pb.start();
@@ -48,7 +48,7 @@ public class Cuenta_vocal {
         String[] command = {
                 "java",
                 "-classpath",
-                "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP",
+                "C:\\temp\\PSP\\out\\production\\PSP",
                 "Ej4." + CLASE2_EJECUTAR
         };
 
@@ -58,8 +58,8 @@ public class Cuenta_vocal {
         File arc = new File("texto.txt");
         pb.redirectInput(Redirect.from(arc));
 
-        System.out.println("\nDirectorio trabajo: " + "C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP");
-        pb.directory(new File("C:\\Users\\Carlos\\IdeaProjects\\PSP\\out\\production\\PSP"));
+        System.out.println("\nDirectorio trabajo: " + "C:\\temp\\PSP\\out\\production\\PSP");
+        pb.directory(new File("C:\\temp\\PSP\\out\\production\\PSP"));
 
         System.out.println("Comando lanzado");
         Process process = pb.start();
