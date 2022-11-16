@@ -1,3 +1,5 @@
+package ej1;
+
 public class Ejercicio1 {
     final int nOperaciones = 3000;
 
@@ -29,8 +31,8 @@ public class Ejercicio1 {
     class Incrementa extends Thread {
 
         public void run() {
-            for (int n = 0; n < nOperaciones; n++) {
-                contador++;
+            for (int n = 0; n < nOperaciones; n++) { //Seccion critica: quiere acceder a una variable que puede estar siendo usada por el otro hilo
+                contador++;//Seccion critica: quiere acceder a una variable que puede estar siendo usada por el otro hilo
             }
         }
     }
@@ -38,8 +40,8 @@ public class Ejercicio1 {
     class Decrementa extends Thread {
 
         public void run() {
-            for (int n = 0; n < nOperaciones; n++) {
-                contador--;
+            for (int n = 0; n < nOperaciones; n++) {//Seccion critica: quiere acceder a una variable que puede estar siendo usada por el otro hilo
+                contador--;//Seccion critica: quiere acceder a una variable que puede estar siendo usada por el otro hilo
             }
         }
     }
