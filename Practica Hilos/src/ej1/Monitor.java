@@ -1,38 +1,24 @@
-/*
-    Programa que intenta demostrar los problemas de la condición de carrera
-    si no utilizamos mecanismos de sincronización.
- */
 package ej1;
 
-/**
- * Ejemplo de aplicación que demuestra el problema de la condición de carrera
- *
- * Lo solucionamos utilizando un Monitor (synchronized)
- *
- * El programa  da resultados acorde a lo esperado. Solventa los problemas
- * de sincronización
- *
- *
- */
-public class IncDec_Monitor {
+public class Monitor {
 
-    final int N_OPERACIONES = 3000;
+    final int noperaciones = 3000;
 
-    final int VALOR_INICIAL = 99;
+    final int vinicial = 99;
 
     /**
      * Variable compartida por los hilos sin control de exclusión
-     * 
+     * <p>
      * Se crea clase pues synchronized pide un objeto para realizar monitor
      */
     class Contador {
-        public int value=VALOR_INICIAL;
+        public int value = vinicial;
     }
-    
+
     final Contador contador = new Contador();
 
     public static void main(String[] args) {
-        new IncDec_Monitor().runProgram();
+        new Monitor().runProgram();
     }
 
     public void runProgram() {
@@ -54,7 +40,7 @@ public class IncDec_Monitor {
 
         @Override
         public void run() {
-            for (int n = 0; n < N_OPERACIONES; n++) {
+            for (int n = 0; n < noperaciones; n++) {
                 synchronized (contador) {
                     contador.value++;
                 }
@@ -67,7 +53,7 @@ public class IncDec_Monitor {
 
         @Override
         public void run() {
-            for (int n = 0; n < N_OPERACIONES; n++) {
+            for (int n = 0; n < noperaciones; n++) {
                 synchronized (contador) {
                     contador.value--;
                 }

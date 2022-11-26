@@ -1,7 +1,7 @@
 package ej1;
 
 public class Ejercicio1 {
-    final int nOperaciones = 3000;
+    final int nOperaciones = 10000;
 
     final int vInicial = 99;
 
@@ -27,6 +27,7 @@ public class Ejercicio1 {
         }
         System.out.println("\nValor FINAL: " + contador);
     }
+
     // HILO QUE INCREMENTA
     class Incrementa extends Thread {
 
@@ -36,6 +37,7 @@ public class Ejercicio1 {
             }
         }
     }
+
     // HILO QUE DECREMENTA
     class Decrementa extends Thread {
 

@@ -2,31 +2,21 @@ package ej1;
 
 import java.util.concurrent.Semaphore;
 
-/**
- * Ejemplo de aplicación que demuestra el problema de la condición de carrera
- *
- * Creamos sección critica utilizando un semaforo binario.
- *
- * El problema de esta propuesta es que hay que prestar mucha atención al orden
- * de las operaciones para evitar interbloqueos o una sección critica no operativa.
- * 
- * Prueba a cambiar o comentar alguna de las operaciones adquire() o release()
- */
-public class IncDec_Mutex {
+public class Semaforo {
 
-    final int N_OPERACIONES = 30000;
+    final int noperaciones = 30000;
 
-    final int VALOR_INICIAL = 99;
+    final int vinicial = 99;
 
     /**
      * Semaforo binario que nos garantizará la exclusión mutua
      */
     protected final Semaphore mutex = new Semaphore(1);
 
-     int contador = VALOR_INICIAL;
+    int contador = vinicial;
 
     public static void main(String[] args) {
-        new IncDec_Mutex().runProgram();
+        new Semaforo().runProgram();
     }
 
     public void runProgram() {
@@ -47,7 +37,7 @@ public class IncDec_Mutex {
     class Incrementa extends Thread {
 
         public void run() {
-            for (int n = 0; n < N_OPERACIONES; n++) {
+            for (int n = 0; n < noperaciones; n++) {
                 try {
                     mutex.acquire(1);   // Entramos en sección critica
                     contador++;         // Sección critica
@@ -64,7 +54,7 @@ public class IncDec_Mutex {
     class Decrementa extends Thread {
 
         public void run() {
-            for (int n = 0; n < N_OPERACIONES; n++) {
+            for (int n = 0; n < noperaciones; n++) {
                 try {
                     mutex.acquire(1);   // Entramos en sección critica
                     contador--;         // Sección critica
