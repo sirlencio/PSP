@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 import javax.swing.*;
 
 public class Ejercicio3 {
@@ -130,6 +131,14 @@ public class Ejercicio3 {
 
     public Hilo ultimo() {
         int idx = 0;
+        boolean encontrado = false;
+        while(!encontrado && idx < 24){
+            if(!hilos[idx].continuarHilo){
+                idx++;
+            }else{
+                encontrado = true;
+            }
+        }
         for (int i = 0; i < hilos.length; i++) {
             if (hilos[i].continuarHilo && hilos[i].getX() <= hilos[idx].getX()) {
                 idx = i;
@@ -180,7 +189,10 @@ public class Ejercicio3 {
             try {
                 while (continuarHilo) {
                     //System.out.print("\n [ " + getLabel().getText() + " ]");
+                    Semaphore s = new Semaphore(1);
+                    s.acquire();
                     desplazaEtiqueta();
+                    s.release();
                     int espera = rnd.nextInt(DEMORA_BASE) * rnd.nextInt(VELOCIDAD);
                     if (ESPERA_ACTIVA) {
                         double inicio = System.currentTimeMillis();
