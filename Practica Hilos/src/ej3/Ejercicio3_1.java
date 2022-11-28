@@ -4,10 +4,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 import javax.swing.*;
 
-public class Ejercicio3 {
+public class Ejercicio3_1 {
 
     final int SIZE_X = 1200; // Ancho ventana
     final int SIZE_Y = 700; // Alto ventana
@@ -35,20 +34,20 @@ public class Ejercicio3 {
     JFrame frame;   // Ventana principal (marco)
     JPanel panel;   // La ventana principal tiene un marco
 
-    final Ejercicio3.Hilo hilos[] = new Ejercicio3.Hilo[N_HILOS];
+    final Ejercicio3_1.Hilo hilos[] = new Ejercicio3_1.Hilo[N_HILOS];
 
     //
     // METODOS =========================================================
     // 
     // default constructor 
-    public Ejercicio3() {
+    public Ejercicio3_1() {
         initComponents();
         ejecutaHilos();
     }
 
     // main class 
     public static void main(String[] args) {
-        Ejercicio3 programa = new Ejercicio3();
+        Ejercicio3_1 programa = new Ejercicio3_1();
     }
 
     /**
@@ -131,14 +130,6 @@ public class Ejercicio3 {
 
     public Hilo ultimo() {
         int idx = 0;
-        boolean encontrado = false;
-        while(!encontrado && idx < 24){
-            if(!hilos[idx].continuarHilo){
-                idx++;
-            }else{
-                encontrado = true;
-            }
-        }
         for (int i = 0; i < hilos.length; i++) {
             if (hilos[i].continuarHilo && hilos[i].getX() <= hilos[idx].getX()) {
                 idx = i;
@@ -189,10 +180,7 @@ public class Ejercicio3 {
             try {
                 while (continuarHilo) {
                     //System.out.print("\n [ " + getLabel().getText() + " ]");
-                    Semaphore s = new Semaphore(1);
-                    s.acquire();
                     desplazaEtiqueta();
-                    s.release();
                     int espera = rnd.nextInt(DEMORA_BASE) * rnd.nextInt(VELOCIDAD);
                     if (ESPERA_ACTIVA) {
                         double inicio = System.currentTimeMillis();
