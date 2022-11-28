@@ -117,7 +117,7 @@ public class Ejercicio3_1 {
         }
     }
 
-    public int posPrimero() {
+    public synchronized int posPrimero() {
         int x = 0;
         for (int i = 0; i < hilos.length; i++) {
             Rectangle rectLabel = hilos[i].getLabel().getBounds();
@@ -128,8 +128,9 @@ public class Ejercicio3_1 {
         return x;
     }
 
-    public Hilo ultimo() {
+    public synchronized Hilo ultimo() {
         int idx = 0;
+
         for (int i = 0; i < hilos.length; i++) {
             if (hilos[i].continuarHilo && hilos[i].getX() <= hilos[idx].getX()) {
                 idx = i;
@@ -239,9 +240,9 @@ public class Ejercicio3_1 {
             int ultimoX = ultimo.getX();
             int separacion = newX - ultimoX;
 
-            if (!ultimo.continuarHilo) {
+            /*if (!ultimo.continuarHilo) {
                 throw new Exception("El último no puede estar muerto");
-            }
+            }*/
 
             if (newX == primeroX) { //Va primero
                 label.setForeground(Color.YELLOW);

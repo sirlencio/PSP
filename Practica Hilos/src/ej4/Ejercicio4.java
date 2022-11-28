@@ -1,5 +1,6 @@
 package ej4;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -13,19 +14,19 @@ public class Ejercicio4 {
         Semaphore s = new Semaphore(4);
         char[] letras = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
         for (char letra : letras) {
-            Letra l = new Letra(letra, sistema, s);
-            l.start();
-        }
+            Hilo thread = new Hilo(letra, sistema, s);
+            thread.start();
 
+        }
     }
 }
 
-class Letra extends Thread {
+class Hilo extends Thread {
     private char inicial;
     private SistemaDeRed sistema;
     private Semaphore s;
 
-    public Letra(char ch, SistemaDeRed sistema, Semaphore s) {
+    public Hilo(char ch, SistemaDeRed sistema, Semaphore s) {
         inicial = ch;
         this.sistema = sistema;
         this.s = s;
@@ -34,7 +35,6 @@ class Letra extends Thread {
     public void run() {
         try {
             s.acquire();
-
             if (!sistema.claveAcertada) {
                 char[] letras = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
                 for (int i = 0; i < letras.length; i++) {
@@ -45,24 +45,21 @@ class Letra extends Thread {
                             char c3 = letras[k];
 
                             if (sistema.claveAcertada) {
-                                break;
+                                s.release();
+                                return;
                             }
                             String prueba = "" + inicial + c1 + c2 + c3;
 
                             if (sistema.checkClave(prueba)) {
                                 sistema.claveAcertada = true;
-                                System.out.println(sistema.nIntentos + " - Hilo de letra --> " + inicial + ", prueba " + prueba + " - Acierto");
-                                break;
-                            } else {
-                                System.out.println(sistema.nIntentos + " - Hilo de letra --> " + inicial + ", prueba " + prueba + " - Fallo");
+                                s.release();
+                                return;
                             }
-
                         }
                     }
                 }
             }
             s.release();
-
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -89,6 +86,12 @@ class SistemaDeRed {
 
     public synchronized boolean checkClave(String prueba) {
         nIntentos++;
-        return prueba.equals(pwd);
+        if (prueba.equals(pwd)) {
+            System.out.println(nIntentos + " - H-" + prueba.charAt(0) + ", prueba " + prueba + " - Acierto");
+            return true;
+        } else if (!claveAcertada){
+            System.out.println(nIntentos + " - H-" + prueba.charAt(0) + ", prueba " + prueba + " - Fallo");
+        }
+        return false;
     }
 }

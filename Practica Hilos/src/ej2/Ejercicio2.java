@@ -13,7 +13,7 @@ public class Ejercicio2 {
     final int SIZE_Y = 700; // Alto ventana
     final int W_LABEL = 30; // Ancho etiqueta
     final int H_LABEL = 30; // Alto etiqueta
-    final int OFFSET = 5;   // Nº de pixels que avanza en cada movimiento
+    final int OFFSET = 20;   // Nº de pixels que avanza en cada movimiento
     final int PROB_CAMBIADIRECCION = 5; // Porcentaje por el que se cambia de dirección
     final static int N_HILOS = 50;  // Nº de hilos, y etiquetas que se mostrarán
     final Random rnd = new Random();    // Generador de nºs aleatorios.
@@ -80,7 +80,7 @@ public class Ejercicio2 {
     }
 
     public Point getPosLibre() {
-        synchronized (hilos) { //Seccion critica
+        //synchronized (hilos) {
             Rectangle rect = new Rectangle(0, 0, H_LABEL, W_LABEL);
             Rectangle rPanel = panel.getBounds();
             int x, y;
@@ -90,13 +90,13 @@ public class Ejercicio2 {
                 rect.setLocation(x, y);
             } while (colisionaConOtras(null, rect));
             return new Point(x, y);
-        }
+        //}
     }
 
     public boolean colisionaConOtras(JLabel label, Rectangle newPos) {
-        synchronized (hilos) { //Seccion critica
+        //synchronized (hilos) {
             for (Hilo hilo : hilos) {
-               if (hilo != null) {
+                if (hilo != null) {
                     JLabel aux = hilo.getLabel();
                     if (aux != label) {
                         if (newPos.intersects(aux.getBounds())) {
@@ -105,8 +105,8 @@ public class Ejercicio2 {
                     }
                 }
             }
-        }
-        return false;
+            return false;
+        //}
     }
 
     /**
@@ -155,10 +155,10 @@ public class Ejercicio2 {
         @Override
         public void run() {
             while (continuarHilo) {
-                synchronized (rnd) {
+                //synchronized (hilos) {
                     calculaDireccion();
                     desplazaEtiqueta();
-                }
+                //}
                 try {
                     Thread.sleep(30);
                 } catch (Exception ignored) {
@@ -226,7 +226,6 @@ public class Ejercicio2 {
                     break;
             }
             rLabel.setLocation(newX, newY);
-
             if (!Ejercicio2.this.colisionaConOtras(label, rLabel)) {
                 label.setBounds(rLabel);
             }

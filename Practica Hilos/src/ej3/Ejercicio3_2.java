@@ -1,275 +1,220 @@
 package ej3;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class Ejercicio3_2 {
+    final int SIZE_X = 1200;
 
-    final int SIZE_X = 1200; // Ancho ventana
-    final int SIZE_Y = 700; // Alto ventana
-    final int W_LABEL = 25 * 3; // Ancho etiqueta
-    final int H_LABEL = 25; // Alto etiqueta
+    final int SIZE_Y = 700;
 
-    final int SALTO = 15;   // Nº de pixels máximo que avanza en cada movimiento
-    final int SEP_Y = 4;    // separación entre etiquetas
-    final int SIZE_CARRIL = (H_LABEL + SEP_Y);
+    final int W_LABEL = 75;
+
+    final int H_LABEL = 25;
+
+    final int SALTO = 15;
+
+    final int SEP_Y = 4;
+
+    final int SIZE_CARRIL = 29;
 
     final int MAX_SEPARACION = 150;
 
-    final int DEMORA_BASE = 100; // Milisegundos que esperamos para realizar el siguiente movimiento
+    final int DEMORA_BASE = 100;
+
     final int VELOCIDAD = 15;
 
-    final boolean ESPERA_ACTIVA = false; // Indica si la demora se hace con espera activa o con sleep
 
-    final int N_HILOS = (int) SIZE_Y / SIZE_CARRIL;  // Nº de hilos y etiquetas que se mostrarán, tantas como caben en vertical
+    final int N_HILOS = 24;
 
-    final Random rnd = new Random();    // Generador de nºs aleatorios.
-    // Cuando trabajamos en concurrencia debemos tratar
-    // de garantizar que este objeto es accedido en modo exclusivo
-    // en otro caso no hay garantía de que los números sean aleatorios
+    final Random rnd = new Random();
 
-    JFrame frame;   // Ventana principal (marco)
-    JPanel panel;   // La ventana principal tiene un marco
+    JFrame frame;
 
-    final Ejercicio3_2.Hilo hilos[] = new Ejercicio3_2.Hilo[N_HILOS];
+    JPanel panel;
 
-    //
-    // METODOS =========================================================
-    //
-    // default constructor
+    final Hilo[] hilos = new Hilo[N_HILOS];
+
     public Ejercicio3_2() {
         initComponents();
         ejecutaHilos();
     }
 
-    // main class
     public static void main(String[] args) {
-        Ejercicio3_1 programa = new Ejercicio3_1();
+        Ejercicio3_2 programa = new Ejercicio3_2();
     }
 
-    /**
-     * Creamos la ventana principal
-     */
     public void initComponents() {
-        // create a new frame to stor text field and button
-        frame = new JFrame("Etiquetas");
-        panel = new JPanel(); // create a panel
-        panel.setLayout(null);
-
-        // add panel to frame
-        //frame.add(panel);
-        frame.getContentPane().add(panel);
-        frame.setSize(SIZE_X, SIZE_Y); // set the size of frame
-        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-
-        /**
-         * Evento que captura cuando se cierra la ventana. Comunica a los hilos
-         * que finalicen
-         */
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
+        this.frame = new JFrame("Etiquetas");
+        this.panel = new JPanel();
+        this.panel.setLayout(null);
+        this.frame.getContentPane().add(this.panel);
+        this.frame.setSize(1200, 700);
+        this.frame.setDefaultCloseOperation(2);
+        this.frame.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                finalizaHilos();
+                Ejercicio3_2.this.finalizaHilos();
             }
         });
-
-        //5. Show it.
-        frame.setVisible(true);
-
-        //frame.show();   // Obsoleto, aunque a nosotros no nos preocupa
+        this.frame.setVisible(true);
     }
 
-    /**
-     * Crea una etiqueta JLabel y la situa en la posición indicada
-     *
-     * @param x
-     * @param y
-     * @return
-     */
     JLabel creaEtiqueta(int x, int y, String id) {
-        // create a label to display text
         JLabel label = new JLabel();
-
-        // add text to label
         label.setText(id);
         label.setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setBounds(x, y, W_LABEL, H_LABEL);
+        label.setHorizontalAlignment(0);
+        label.setBounds(x, y, 75, 25);
         label.setOpaque(true);
-        panel.add(label);
+        this.panel.add(label);
         return label;
     }
 
-    /**
-     * Lanza los hilos
-     */
     public void ejecutaHilos() {
-        for (int i = 0; i < hilos.length; i++) {
-            JLabel l = creaEtiqueta(0, i * SIZE_CARRIL + SEP_Y / 2, Integer.toString(i + 1));
-            hilos[i] = new Hilo(l);
+        int i;
+        for (i = 0; i < this.hilos.length; i++) {
+            JLabel l = creaEtiqueta(0, i * 29 + 2, Integer.toString(i));
+            this.hilos[i] = new Hilo(l);
         }
-        for (int i = 0; i < hilos.length; i++) {
-            hilos[i].start();
-        }
+        for (i = 0; i < this.hilos.length; i++)
+            this.hilos[i].start();
     }
 
-    public int posPrimero() {
+    public synchronized int posPrimero() {
         int x = 0;
-        for (int i = 0; i < hilos.length; i++) {
-            Rectangle rectLabel = hilos[i].getLabel().getBounds();
-            if (hilos[i].continuarHilo && (int) rectLabel.getX() >= x) {
-                x = (int) rectLabel.getX();
+        for (int i = 0; i < this.hilos.length; i++) {
+            if (this.hilos[i] != null) {
+                Rectangle rectLabel = this.hilos[i].getLabel().getBounds();
+                if ((int)rectLabel.getX() > x)
+                    x = (int)rectLabel.getX();
             }
         }
         return x;
     }
 
-    public Hilo ultimo() {
+    public synchronized Hilo ultimo() {
         int idx = 0;
-        for (int i = 0; i < hilos.length; i++) {
-            if (hilos[i].continuarHilo && hilos[i].getX() <= hilos[idx].getX()) {
+        for (int i = 0; i < this.hilos.length; i++) {
+            if (this.hilos[i].getX() < this.hilos[idx].getX())
                 idx = i;
-            }
         }
-//        System.out.print("\n posUltimo () - FIN =" + x);
-        return hilos[idx];
+        return this.hilos[idx];
     }
 
-    /**
-     * Comunica a todos los hilos que deben finalizar
-     */
     public void finalizaHilos() {
-        for (int i = 0; i < hilos.length; i++) {
-            hilos[i].finaliza();
+        for (int i = 0; i < this.hilos.length; i++)
+            this.hilos[i].finaliza();
+    }
 
+    public synchronized void despiertaBloqueadosPor(Hilo hiloBloqueador) {
+        for (int i = 0; i < this.hilos.length; i++) {
+            if ((this.hilos[i]).bloqueadoPor == hiloBloqueador && this.hilos[i]
+                    .getX() <= hiloBloqueador.getX())
+                synchronized (this.hilos[i]) {
+                    this.hilos[i].notify();
+                    (this.hilos[i]).bloqueadoPor = null;
+                }
         }
     }
 
-
-    /**
-     * *********************************************************************
-     * CLASE ANIDADA
-     * **********************************************************************
-     */
     class Hilo extends Thread {
-
         private JLabel label;
+
         private String textLabel;
+
         boolean continuarHilo = true;
+
         Hilo bloqueadoPor = null;
 
-        /**
-         * Constructor
-         *
-         * @param label
-         */
         public Hilo(JLabel label) {
             this.label = label;
             this.textLabel = label.getText();
         }
 
-        /**
-         * Se ejecuta indefinidamente hasta que se marca el hilo para finalizar
-         */
-        @Override
         public void run() {
-            try {
-                while (continuarHilo) {
-                    //System.out.print("\n [ " + getLabel().getText() + " ]");
-                    desplazaEtiqueta();
-                    int espera = rnd.nextInt(DEMORA_BASE) * rnd.nextInt(VELOCIDAD);
-                    if (ESPERA_ACTIVA) {
-                        double inicio = System.currentTimeMillis();
-                        while (System.currentTimeMillis() < inicio + espera) ;
-                    } else {
-                        try {
-                            Thread.sleep(espera);
-                        } catch (Exception Ex) {
-                        }
-                    }
-                    System.out.println("\nFinalizado " + getLabel().getText());
-
-                }
-            } catch (Exception e) {
-                System.out.println("\nFinalizado " + getLabel().getText() + " ANOMALO");
-                e.printStackTrace();
+            while (this.continuarHilo) {
+                desplazaEtiqueta();
+                int espera = Ejercicio3_2.this.rnd.nextInt(100) * Ejercicio3_2.this.rnd.nextInt(15);
+                try {
+                    Thread.sleep(espera);
+                } catch (Exception exception) {}
             }
+            System.out.println("\nFinalizado " + getLabel().getText());
+        }
+
+        public void bloqueadoPor(Hilo por) {
+            this.bloqueadoPor = por;
+            this.label.setForeground(Color.ORANGE);
+            System.out.print("\n" + getLabel().getText() + " Bloqueado");
+            this.label.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 4));
+            try {
+                synchronized (this) {
+                    wait();
+                }
+                System.out.print("\n" + getLabel().getText() + " Despierta");
+                this.label.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 2));
+            } catch (InterruptedException interruptedException) {}
         }
 
         public int getX() {
-            return (int) label.getBounds().getX();
+            return (int)this.label.getBounds().getX();
         }
 
-        /**
-         * Marca el hilo para que se finalice
-         */
         public void finaliza() {
-            continuarHilo = false;
+            this.continuarHilo = false;
         }
 
-        /**
-         * Mueve la etiqueta en la dirección calculada y comprueba que no se
-         * salga de los límites de la ventana
-         */
-        private void desplazaEtiqueta() throws Exception {
-            Rectangle rectLabel = label.getBounds();
-            Rectangle rectPanel = panel.getBounds();
-
-            int newX = ((int) rectLabel.getX());
-            int y = ((int) rectLabel.getY());
+        private void desplazaEtiqueta() {
+            Rectangle rectLabel = this.label.getBounds();
+            Rectangle rectPanel = Ejercicio3_2.this.panel.getBounds();
+            int newX = (int)rectLabel.getX();
+            int y = (int)rectLabel.getY();
             int salto = SALTO;
-            if (newX + salto < rectPanel.getWidth() - rectLabel.getWidth()) {
-                // No llega al final
+            if ((newX + salto) < rectPanel.getWidth() - rectLabel.getWidth()) {
                 newX += salto;
-                //System.out.print("\n" + getLabel().getText() + " Avanza  [" + salto + "] - X=" + newX);
             } else {
-                // LLega al final, no sobrepasa
-                newX = (int) (rectPanel.getWidth() - rectLabel.getWidth());
-                continuarHilo = false;
+                newX = (int)(rectPanel.getWidth() - rectLabel.getWidth());
+                this.continuarHilo = false;
                 System.out.print("\n** Termina " + getLabel().getText());
             }
             rectLabel.setLocation(newX, y);
-            label.setBounds(rectLabel);
+            this.label.setBounds(rectLabel);
             Hilo ultimo = ultimo();
             int primeroX = posPrimero();
             int ultimoX = ultimo.getX();
             int separacion = newX - ultimoX;
 
-            if (!ultimo.continuarHilo) {
-                throw new Exception("El último no puede estar muerto");
+            if (newX == primeroX) {
+                this.label.setForeground(Color.YELLOW);
+                this.label.setBackground(Color.BLUE);
+            } else if (newX == ultimoX) {
+                this.label.setForeground(Color.RED);
+                this.label.setBackground(Color.CYAN);
+            } else {
+                this.label.setForeground(Color.BLACK);
+                this.label.setBackground(Color.WHITE);
             }
-
-            if (newX == primeroX) { //Va primero
-                label.setForeground(Color.YELLOW);
-                label.setBackground(Color.BLUE);
-            } else if (newX == ultimoX) { //Va ultimo
-                label.setForeground(Color.ORANGE);
-                label.setBackground(Color.CYAN);
-            } else { //Va enmedio
-                label.setForeground(Color.BLACK);
-                label.setBackground(Color.WHITE);
-            }
-            label.setText(textLabel + "(" + separacion + ")");
+            this.label.setText(this.textLabel + "(" + separacion + ")");
             if (separacion > MAX_SEPARACION) {
-                // Penalizado
-                label.setForeground(Color.RED);
-                label.setBackground(Color.GRAY);
-                System.out.print("\n" + getLabel().getText() + " Descalificado");
-                this.continuarHilo = false;
-                this.label.setText(textLabel + "<" + ultimo.textLabel + ">");
+                System.out.print("\n Penalizado [ **" + getLabel().getText() + "** ]");
+                this.label.setForeground(Color.ORANGE);
+                System.out.print("\n" + getLabel().getText() + " Duerme");
+                bloqueadoPor(ultimo);
             }
+            Ejercicio3_2.this.despiertaBloqueadosPor(this);
         }
 
-        /**
-         * @return the label
-         */
         public JLabel getLabel() {
-            return label;
+            return this.label;
         }
     }
-
 }
