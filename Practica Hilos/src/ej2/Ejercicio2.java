@@ -108,7 +108,6 @@ public class Ejercicio2 {
             return false;
         }
     }
-
     /**
      * Lanza los hilos
      */
