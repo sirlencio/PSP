@@ -13,7 +13,7 @@ public class Ejercicio2 {
     final int SIZE_Y = 700; // Alto ventana
     final int W_LABEL = 30; // Ancho etiqueta
     final int H_LABEL = 30; // Alto etiqueta
-    final int OFFSET = 20;   // Nº de pixels que avanza en cada movimiento
+    final int OFFSET = 10;   // Nº de pixels que avanza en cada movimiento
     final int PROB_CAMBIADIRECCION = 5; // Porcentaje por el que se cambia de dirección
     final static int N_HILOS = 50;  // Nº de hilos, y etiquetas que se mostrarán
     final Random rnd = new Random();    // Generador de nºs aleatorios.
@@ -227,6 +227,8 @@ public class Ejercicio2 {
             rLabel.setLocation(newX, newY);
             if (!Ejercicio2.this.colisionaConOtras(label, rLabel)) {
                 label.setBounds(rLabel);
+            }else{
+                obligaCambioDireccion = true;
             }
         }
 
