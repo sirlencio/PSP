@@ -17,7 +17,7 @@ public class Ejercicio3_1 {
     final int SEP_Y = 4;    // separación entre etiquetas
     final int SIZE_CARRIL = (H_LABEL + SEP_Y);
 
-    final int MAX_SEPARACION = 50;
+    final int MAX_SEPARACION = 150;
 
     final int DEMORA_BASE = 100; // Milisegundos que esperamos para realizar el siguiente movimiento
     final int VELOCIDAD = 15;
