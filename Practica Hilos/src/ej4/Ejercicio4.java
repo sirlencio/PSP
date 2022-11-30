@@ -1,6 +1,5 @@
 package ej4;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -37,23 +36,17 @@ class Hilo extends Thread {
             s.acquire();
             if (!sistema.claveAcertada) {
                 char[] letras = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-                for (int i = 0; i < letras.length; i++) {
-                    char c1 = letras[i];
-                    for (int j = 0; j < letras.length; j++) {
-                        char c2 = letras[j];
-                        for (int k = 0; k < letras.length; k++) {
-                            char c3 = letras[k];
-
-                            if (sistema.claveAcertada) {
-                                s.release();
-                                return;
-                            }
-                            String prueba = "" + inicial + c1 + c2 + c3;
+                for (char c1 : letras) {
+                    for (char c2 : letras) {
+                        for (char c3 : letras) {
+                            String prueba = String.valueOf(inicial) + c1 + c2 + c3;
 
                             if (sistema.checkClave(prueba)) {
                                 sistema.claveAcertada = true;
                                 s.release();
                                 return;
+                            } else if (sistema.claveAcertada) {
+                                break;
                             }
                         }
                     }
@@ -74,14 +67,14 @@ class SistemaDeRed {
 
     public SistemaDeRed() {
         Random aleatorio = new Random();
-        String password = "";
+        String pwd = "";
         char[] letras = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
         for (int i = 0; i < 4; i++) {
             char c = letras[aleatorio.nextInt(letras.length)];
-            password += c;
+            pwd += c;
         }
-        pwd = password;
+        this.pwd = pwd;
     }
 
     public synchronized boolean checkClave(String prueba) {
@@ -89,7 +82,7 @@ class SistemaDeRed {
         if (prueba.equals(pwd)) {
             System.out.println(nIntentos + " - H-" + prueba.charAt(0) + ", prueba " + prueba + " - Acierto");
             return true;
-        } else if (!claveAcertada){
+        } else if (!claveAcertada) {
             System.out.println(nIntentos + " - H-" + prueba.charAt(0) + ", prueba " + prueba + " - Fallo");
         }
         return false;

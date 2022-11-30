@@ -17,7 +17,7 @@ public class Ejercicio3_1 {
     final int SEP_Y = 4;    // separación entre etiquetas
     final int SIZE_CARRIL = (H_LABEL + SEP_Y);
 
-    final int MAX_SEPARACION = 150;
+    final int MAX_SEPARACION = 50;
 
     final int DEMORA_BASE = 100; // Milisegundos que esperamos para realizar el siguiente movimiento
     final int VELOCIDAD = 15;
@@ -117,7 +117,7 @@ public class Ejercicio3_1 {
         }
     }
 
-    public synchronized int posPrimero() {
+    public int posPrimero() {
         int x = 0;
         for (int i = 0; i < hilos.length; i++) {
             Rectangle rectLabel = hilos[i].getLabel().getBounds();
@@ -128,9 +128,16 @@ public class Ejercicio3_1 {
         return x;
     }
 
-    public synchronized Hilo ultimo() {
+    public Hilo ultimo() {
         int idx = 0;
-
+        boolean encontrado = false;
+        while (!encontrado && idx < 24) {
+            if (!hilos[idx].continuarHilo) {
+                idx++;
+            } else {
+                encontrado = true;
+            }
+        }
         for (int i = 0; i < hilos.length; i++) {
             if (hilos[i].continuarHilo && hilos[i].getX() <= hilos[idx].getX()) {
                 idx = i;
@@ -138,6 +145,7 @@ public class Ejercicio3_1 {
         }
 //        System.out.print("\n posUltimo () - FIN =" + x);
         return hilos[idx];
+
     }
 
     /**
@@ -240,9 +248,9 @@ public class Ejercicio3_1 {
             int ultimoX = ultimo.getX();
             int separacion = newX - ultimoX;
 
-            /*if (!ultimo.continuarHilo) {
+            if (!ultimo.continuarHilo) {
                 throw new Exception("El último no puede estar muerto");
-            }*/
+            }
 
             if (newX == primeroX) { //Va primero
                 label.setForeground(Color.YELLOW);

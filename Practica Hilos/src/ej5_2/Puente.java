@@ -1,50 +1,42 @@
-package Ejercicio5_2_EmpresaMineria;
+package ej5_2;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 public class Puente {
-    ArrayList<Thread> ExplanadaIzquierda = new ArrayList<>();
-    ArrayList<Thread> ExplanadaDerecha = new ArrayList<>();
+    ArrayList<Thread> ladoIzq = new ArrayList<>();
+    ArrayList<Thread> ladoDer = new ArrayList<>();
 
-
-
-
-    public void añadirDerecha(Volquete vol){
-        ExplanadaDerecha.add(vol);
+    public void anadirDerecha(Camion camion) {
+        ladoDer.add(camion);
     }
 
-    public void  cruzarDer(Volquete vol){ //Sección Crítica
+    public void cruzandoIzq(Camion camion) {
         try {
-
-            ExplanadaIzquierda.remove(vol);
-            System.out.println("V_"+vol.getNombre()+" (8) - PUENTE - Comienzo cruzar");
+            ladoDer.remove(camion);
+            System.out.println("C_" + camion.getNombre() + " (2) - PUENTE - Comienzo cruzar");
             Thread.sleep(500);
-            ExplanadaDerecha.add(vol);
-
-            notify();
-            System.out.println("V_"+vol.getNombre()+" (9) - PUENTE - Fin cruzar");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public void  cruzarIzq(Volquete vol){
-        try {
-
-            ExplanadaDerecha.remove(vol);
-            System.out.println("V_"+vol.getNombre()+" (2) - PUENTE - Comienzo cruzar");
-
-            Thread.sleep(500);
-            ExplanadaIzquierda.add(vol);
-
-            System.out.println("V_"+vol.getNombre()+" (3) - PUENTE - Fin cruzar");
-
+            ladoIzq.add(camion);
+            System.out.println("C_" + camion.getNombre() + " (3) - PUENTE - Fin cruzar");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public int cantidadLadoIzq(){
-        return ExplanadaIzquierda.size();
+    public void cruzandoDer(Camion camion) {
+        try {
+            ladoIzq.remove(camion);
+            System.out.println("C_" + camion.getNombre() + " (8) - PUENTE - Comienzo cruzar");
+            Thread.sleep(500);
+            ladoDer.add(camion);
+            System.out.println("C_" + camion.getNombre() + " (9) - PUENTE - Fin cruzar");
+            notify(); //Llamamos al siguiente hilo
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    public int nLadoIzq() {
+        return ladoIzq.size();
+    }
+
 }

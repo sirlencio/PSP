@@ -1,17 +1,16 @@
-package Ejercicio5_2_EmpresaMineria;
+package ej5_2;
 
 public class Main {
     public static void main(String[] args) {
         new Main().ejecutaPrograma();
     }
     public void ejecutaPrograma() {
-        Puente puente = new Puente();
+        Puente bridge = new Puente();
         Excavadora exc = new Excavadora();
         for (int i = 0; i < 6; i++) {
-            Volquete volquete = new Volquete("Volquete "+(i+1), puente, exc);
-            puente.añadirDerecha(volquete);
-            volquete.start();
+            Camion camion = new Camion("Camion "+(i+1), bridge, exc);
+            bridge.anadirDerecha(camion);
+            camion.start();
         }
-
     }
 }

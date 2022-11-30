@@ -1,31 +1,22 @@
 package ej5_1;
 
-import java.util.ArrayList;
-
 public class Puente {
 
-    public void añadirDerecha(Volquete vol) {
-
-    }
-
-    public void cruzarDer(Volquete vol) {
+    public void cruzandoIzq(Camion camion) {
         try {
-
-            System.out.println("V_" + vol.getNombre() + " (8) - PUENTE - Comienzo cruzar");
+            System.out.println("C_" + camion.getNombre() + " (2) - PUENTE - Cruzando");
             Thread.sleep(500);
-            System.out.println("V_" + vol.getNombre() + " (9) - PUENTE - Fin cruzar");
+            System.out.println("C_" + camion.getNombre() + " (3) - PUENTE - Fin cruzado");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void cruzarIzq(Volquete vol) {
+    public void cruzandoDer(Camion camion) {
         try {
-
-            System.out.println("V_" + vol.getNombre() + " (2) - PUENTE - Comienzo cruzar");
+            System.out.println("C_" + camion.getNombre() + " (8) - PUENTE - Cruzando");
             Thread.sleep(500);
-            System.out.println("V_" + vol.getNombre() + " (3) - PUENTE - Fin cruzar");
-
+            System.out.println("C_" + camion.getNombre() + " (9) - PUENTE - Fin cruzado");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
