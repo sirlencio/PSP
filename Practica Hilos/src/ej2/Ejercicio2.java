@@ -80,7 +80,7 @@ public class Ejercicio2 {
     }
 
     public Point getPosLibre() {
-        //synchronized (hilos) {
+        synchronized (hilos) {
             Rectangle rect = new Rectangle(0, 0, H_LABEL, W_LABEL);
             Rectangle rPanel = panel.getBounds();
             int x, y;
@@ -90,11 +90,11 @@ public class Ejercicio2 {
                 rect.setLocation(x, y);
             } while (colisionaConOtras(null, rect));
             return new Point(x, y);
-        //}
+        }
     }
 
     public boolean colisionaConOtras(JLabel label, Rectangle newPos) {
-        //synchronized (hilos) {
+        synchronized (hilos) {
             for (Hilo hilo : hilos) {
                 if (hilo != null) {
                     JLabel aux = hilo.getLabel();
@@ -106,7 +106,7 @@ public class Ejercicio2 {
                 }
             }
             return false;
-        //}
+        }
     }
 
     /**
