@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PSP.iml" filepath="$PROJECT_DIR$/PSP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practica 4/Practica 4.iml" filepath="$PROJECT_DIR$/Practica 4/Practica 4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practica Comunicacion Red/Practica Comunicacion Red.iml" filepath="$PROJECT_DIR$/Practica Comunicacion Red/Practica Comunicacion Red.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practica Hilos/Practica Hilos.iml" filepath="$PROJECT_DIR$/Practica Hilos/Practica Hilos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practica Procesos/Practica Procesos.iml" filepath="$PROJECT_DIR$/Practica Procesos/Practica Procesos.iml" />
+    </modules>
+  </component>
+</project>
