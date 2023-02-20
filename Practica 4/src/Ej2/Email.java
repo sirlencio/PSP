@@ -45,8 +45,6 @@ public class Email {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     //Metodo que lee el cuerpo de un txt y lo guarda en un string

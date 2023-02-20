@@ -10,5 +10,6 @@
     <orderEntry type="library" name="javax.activation-1.2.0" level="project" />
     <orderEntry type="library" name="javax.mail" level="project" />
     <orderEntry type="library" name="commons-net-3.9.0" level="project" />
+    <orderEntry type="library" name="jsoup-1.11.3" level="project" />
   </component>
 </module>

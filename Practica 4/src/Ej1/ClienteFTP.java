@@ -17,8 +17,7 @@ public class ClienteFTP {
 
     public static void main(String[] args) {
 
-        // Datos para conectar al servidor FTP
-        String server = "ftp.rediris.es"; // También puede ir la IP
+        String server = "ftp.rediris.es";
 
         try {
             ftp.connect(server);
@@ -37,35 +36,38 @@ public class ClienteFTP {
             // Logueado un usuario (true = pudo conectarse, false = no pudo
             // conectarse)
             boolean login = ftp.login("anonymous", "anonymous");
+            if (login) {
+                ftp.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
+                ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
+                ftp.enterLocalPassiveMode();
 
-            ftp.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
-            ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
-            ftp.enterLocalPassiveMode();
+                listarArchivos(".");
 
-            listarArchivos(".");
+                int opc;
+                do {
+                    menu();
+                    opc = input.nextInt();
+                    switch (opc) {
+                        case 1 -> {
+                            entrarCarpeta();
+                        }
+                        case 2 -> {
+                            descargarArchivo();
+                        }
+                        case 0 -> {
+                            // Cerrando sesión
+                            ftp.logout();
 
-            int opc;
-            do {
-                menu();
-                opc = input.nextInt();
-                switch (opc) {
-                    case 1 -> {
-                        entrarCarpeta();
+                            // Desconectandose con el servidor
+                            ftp.disconnect();
+                            System.out.println("Saliendo...");
+                        }
+                        default -> System.out.println("Opcion invalida");
                     }
-                    case 2 -> {
-                        descargarArchivo();
-                    }
-                    case 0 -> {
-                        // Cerrando sesión
-                        ftp.logout();
-
-                        // Desconectandose con el servidor
-                        ftp.disconnect();
-                        System.out.println("Saliendo...");
-                    }
-                    default -> System.out.println("Opcion invalida");
-                }
-            } while (opc != 0);
+                } while (opc != 0);
+            } else {
+                System.out.println("El usuario no se pudo loguear");
+            }
         } catch (IOException ioe) {
             System.out.println(ioe.getMessage());
         }
@@ -80,7 +82,7 @@ public class ClienteFTP {
         System.out.print("Carpeta de destino: ");
         String destino = input.nextLine();
 
-        File archivoDescargado = new File(destino + fileName);
+        File archivoDescargado = new File(destino + "/" + fileName);
 
         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(archivoDescargado));
 
