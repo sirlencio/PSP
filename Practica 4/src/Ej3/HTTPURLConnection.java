@@ -11,13 +11,11 @@ public class HTTPURLConnection {
 
     // http://elpais.es         https://elpais.com          https://elpais.com/paginainexistente
     public static void main(String[] args) throws IOException {
-        URL url = new URL("http://elpais.es"); // args[0]
+        URL url = new URL(args[0]);
 
         URLConnection urlc = url.openConnection();
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        urlc.setRequestProperty("User-Agent", "Chichinabo de tres al cuarto");
 
         try { //Estamos declarando el inputstream dependiendo de si la pagina devuelve un codigo u otro (como por ejemplo un codigo de notfound)
             InputStream inputStream;
@@ -27,7 +25,7 @@ public class HTTPURLConnection {
             } else {
                 inputStream = urlc.getInputStream();
             }
-            FileOutputStream outputStream = new FileOutputStream("output.html"); // args[1]
+            FileOutputStream outputStream = new FileOutputStream(args[1]);
 
             // Leer datos del InputStream y escribirlos en el archivo
             byte[] buffer = new byte[4096];
@@ -39,12 +37,11 @@ public class HTTPURLConnection {
             // Cerrar los flujos de entrada y salida
             inputStream.close();
             outputStream.close();
-            System.out.println("Guardado el fichero "); // args[1]
+            System.out.println("Guardado el fichero " + args[1]);
             System.out.println("Código de respuesta HTTP: " + responseCode);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 }

@@ -22,7 +22,7 @@ public class HTTPPost {
     }
 
     private static void registrarUsuario(String nombre, String ape) throws IOException {
-        int n = 0;
+        int nregistros = 0;
         int secuencia = 1;
         do {
             String name = nombre + ape + obtenerLetraSecuenciada(secuencia);
@@ -64,16 +64,16 @@ public class HTTPPost {
             }
 
             // Convertir el StringBuilder en un String
-            String contenidoArchivo = stringBuilder.toString();
+            String contenidoPagina = stringBuilder.toString();
             wr.close();
             rd.close();
 
             //Buscamos en la respuesta que no exista un error de registro para pasar al siguiente registro
-            if (!contenidoArchivo.contains("Error de registro")) {
-                n++;
+            if (!contenidoPagina.contains("Error de registro")) {
+                nregistros++;
             }
 
-        } while (n != 20);
+        } while (nregistros != 20);
     }
 
     public static String obtenerLetraSecuenciada(int secuencia) {
