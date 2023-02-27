@@ -6,44 +6,26 @@ import java.nio.ByteBuffer;
 
 public class servidor {
 
-    // Servidor y puerto
     static final String IP = "127.0.0.1";
     static final int PUERTO_SERVIDOR = 8000;
     static final int PUERTO_CLIENTE = 8001;
-
-    // Contador de operadores
-    static int contador = 1;
+    static int noperacion = 1;
 
     public static void main(String[] args) {
-        try {
-            char operador = ' ';
-            while (operador != 'A') {
-                operador = conectarCliente(operador);
+        char operador = ' ';
+        while (operador != 'A') {
+            try (DatagramSocket socket = new DatagramSocket(PUERTO_SERVIDOR)) {
+                InetAddress ip = InetAddress.getByName(IP);
+                socket.connect(ip, PUERTO_CLIENTE);
+
+                do {
+                    operador = operar(socket);
+                } while (operador != 'F' && operador != 'A');
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
-
-    /*
-     * Realiza una conexion con un cliente, asigna el lector y escritor
-     * a ese cliente y procede a hacer las operaciones
-     */
-    private static char conectarCliente(char operador) throws IOException {
-        try (DatagramSocket socket = new DatagramSocket(PUERTO_SERVIDOR)) {
-            // Conectar al cliente
-            InetAddress ip = InetAddress.getByName(IP);
-            socket.connect(ip, PUERTO_CLIENTE);
-
-            // Operar con el cliente
-            do {
-                operador = operar(socket);
-            } while (operador != 'F' && operador != 'A');
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return operador;
     }
 
     /*
@@ -51,34 +33,27 @@ public class servidor {
      * el resultado de esa operacion
      */
     private static char operar(DatagramSocket socket) throws IOException {
-        // Obtener operacion
         char operador = recibirChar(socket);
         System.out.println("Cliente: " + operador);
 
-        // Procesar operacion
-        if (comprobarSigno(operador)) {
-            // Leer numeros
+        if (operador == '+' || operador == '-' || operador == '*' || operador == '/') {
             long n1 = recibirLong(socket);
             long n2 = recibirLong(socket);
 
             System.out.println("Cliente: " + n1);
             System.out.println("Cliente: " + n2);
 
-            // Procesar numeros
             long resultado = calcular(operador, n1, n2);
 
-            // Crear cadena de la operacion
             String cadena = n1 + " " + operador + " " + n2 + " = " + resultado;
 
-            // Enviar resultados
-            enviarInt(socket, contador);
+            enviarInt(socket, noperacion);
             enviarLong(socket, resultado);
             enviarString(socket, cadena);
 
             System.out.println("Enviado: " + cadena);
 
-            // Aumentar contador
-            contador++;
+            noperacion++;
         }
         return operador;
     }
@@ -94,13 +69,6 @@ public class servidor {
             case '/' -> n1 / n2;
             default -> 0;
         };
-    }
-
-    /*
-     * Comprobar que el operador sea un signo válido
-     */
-    private static boolean comprobarSigno(char operador) {
-        return operador == '+' || operador == '-' || operador == '*' || operador == '/';
     }
 
     /*

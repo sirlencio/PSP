@@ -6,26 +6,20 @@ import java.util.*;
 
 public class cliente {
 
-    // Servidor y puerto
-    static final String IP = "127.0.0.1";  // Localhost
+    static final String IP = "127.0.0.1";
     static final int PUERTO = 8000;
-
-    // Leer por teclado
     static Scanner scan = new Scanner(System.in);
-
-    // Reader y writer
     static DataInputStream reader;
     static DataOutputStream writer;
 
     public static void main(String[] args) {
-        // Estable conexion dirigiendonos a esa ip en ese puerto
         try (Socket socket = new Socket(IP, PUERTO)) {
             System.out.println("- Cliente de operaciones matemáticas -");
 
-            // Obtener reader y writer
-            obtenerStreams(socket);
+            //Inicia reader y writer
+            reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-            // Realizar operaciones
             boolean operar = true;
             while (operar) {
                 operar = obtenerOperador(socket);
@@ -41,7 +35,7 @@ public class cliente {
     }
 
     /*
-     * Comprueba que el operador obtenido por teclado sea permitido
+     * Comprueba que el operador obtenido por teclado sea permitido y realiza su respectiva operacion
      */
     private static boolean obtenerOperador(Socket socket) throws IOException {
         // Pedir operador
@@ -49,8 +43,7 @@ public class cliente {
         char operador = scan.nextLine().toUpperCase().charAt(0);
         System.out.println();
 
-        if (compruebaOperador(operador)) {
-            // Envia el operador al servidor
+        if (operador == 'A' || operador == 'F' || operador == '+' || operador == '-' || operador == '*' || operador == '/') {
             writer.writeChar(operador);
             writer.flush();
             return realizarOperacion(socket, operador);
@@ -69,55 +62,36 @@ public class cliente {
             case 'A' -> {   //Detiene el servidor
                 System.out.println("Servidor detenido\n");
 
-                // Cerrar socket
                 socket.close();
 
-                // Detener ejecución
                 return false;
             }
             case 'F' -> {   // Detiene solo el cliente, el servidor seguira escuchando
-                // Cerrar socket
                 socket.close();
 
                 System.out.println("Finalizada la conexión\n");
 
-                // Detener ejecución
                 return false;
             }
-            default -> {    //Operar
+            default -> {    //  Operar
                 enviarNumeros();
 
                 resultados();
 
-                // Realizar otra operación
                 return true;
             }
         }
     }
 
     /*
-     * Comprueba que el operador sea un signo válido
-     */
-    private static boolean compruebaOperador(char operador) {
-        return operador == 'A' || operador == 'F' || operador == '+' || operador == '-' || operador == '*'
-                || operador == '/';
-    }
-
-    /*
      * Obtiene los resultados que envía el servidor y los imprime por pantalla
      */
     private static void resultados() throws IOException {
-        // Número de operación
-        String noperacion = "Nº Operacion: ";
-        noperacion += reader.readInt();
+        String noperacion = "Nº Operacion: " + reader.readInt();
 
-        // Resultado
-        String total = "Resultado: ";
-        total += reader.readLong();
+        String total = "Resultado: " + reader.readLong();
 
-        // Operación completa
-        String rdo = "Operacion realizada: ";
-        rdo += reader.readUTF();
+        String rdo = "Operacion realizada: " + reader.readUTF();
 
         // Mostrar resultados
         System.out.println("===Respuesta del servidor===");
@@ -130,33 +104,13 @@ public class cliente {
      * Pedir números por teclado y enviarlos al servidor.
      */
     private static void enviarNumeros() throws IOException {
-        // Pedir números
-        long n1 = 0;
-        long n2 = 0;
-        boolean seguir = true;
+        System.out.print("Número 1: ");
+        long n1 = scan.nextLong();
+        scan.nextLine();
 
-        do {
-            try {
-                System.out.print("Número 1: ");
-                n1 = scan.nextLong();
-                seguir = false;
-            } catch (InputMismatchException e) {
-                System.out.println("El número introducido no tiene un formato correcto.");
-            }
-            scan.nextLine();
-        } while (seguir);
-
-        seguir = true;
-        do {
-            try {
-                System.out.print("Número 2: ");
-                n2 = scan.nextLong();
-                seguir = false;
-            } catch (InputMismatchException e) {
-                System.out.println("El número introducido no tiene un formato correcto.");
-            }
-            scan.nextLine();
-        } while (seguir);
+        System.out.print("Número 2: ");
+        long n2 = scan.nextLong();
+        scan.nextLine();
 
         System.out.println();
 
@@ -164,14 +118,6 @@ public class cliente {
         writer.writeLong(n1);
         writer.writeLong(n2);
         writer.flush();
-    }
-
-    /*
-     * Obtener reader y writer.
-     */
-    private static void obtenerStreams(Socket socket) throws IOException {
-        reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
     }
 
 }
