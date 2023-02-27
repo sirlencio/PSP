@@ -12,7 +12,7 @@ import javax.mail.Session;
 public class Email {
 
     public static void main(String[] args) {
-        final String fromEmail = args[0];
+        final String fromEmail = "";
         final String password = "aula10dam2";
         String archivo = "Clientes.txt";
 

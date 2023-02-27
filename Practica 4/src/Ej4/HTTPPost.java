@@ -25,9 +25,10 @@ public class HTTPPost {
         int nregistros = 0;
         int secuencia = 1;
         do {
-            String name = nombre + ape + obtenerLetraSecuenciada(secuencia);
-            String email = nombre + obtenerLetraSecuenciada(secuencia) + "@dam2.ieslamisma.net";
-            String pass = nombre + obtenerLetraSecuenciada(secuencia);
+            String letra = obtenerLetraSecuenciada(secuencia);
+            String name = nombre + ape + letra;
+            String email = nombre + letra + "@dam2.ieslamisma.net";
+            String pass = nombre + letra;
             String data = "";
             secuencia++;
             data += URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
