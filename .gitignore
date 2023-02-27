@@ -1,0 +1,16 @@
+# Ignore compiled output, logs and caches
+/bin/
+/out/
+/.idea/
+/.vscode/
+*.log
+*.cache
+
+# Ignore dependencies
+/node_modules/
+/lib/
+/libs/
+/vendor/
+/.venv/
+
+Clientes.txt
