@@ -12,17 +12,15 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 
-// The tutorial can be found just here on the SSaurel's Blog : 
+// The tutorial can be found just here on the SSaurel's Blog :
 // https://www.ssaurel.com/blog/create-a-simple-http-web-server-in-java
 // Each Client Connection will be managed in a dedicated Thread
 public class JavaHTTPServer implements Runnable {
 
-    static final File WEB_ROOT = new File("Practica Comunicacion Red\\HTTP Server");
+    static final File WEB_ROOT = new File("HTTP Server");
     static final String DEFAULT_FILE = "index.html";
     static final String FILE_NOT_FOUND = "404.html";
     static final String METHOD_NOT_SUPPORTED = "505.html";
@@ -34,9 +32,6 @@ public class JavaHTTPServer implements Runnable {
 
     // Client Connection via Socket Class
     private Socket connect;
-
-    // Número de línea leido del InputStream
-    private int n_lin = 0;
 
     public JavaHTTPServer(Socket c) {
         connect = c;
@@ -82,16 +77,13 @@ public class JavaHTTPServer implements Runnable {
             // get binary output stream to client (for requested data)
             dataOut = new BufferedOutputStream(connect.getOutputStream());
 
-            // get first line of the request from the client
-            String input = in.readLine();
-            // Mostramos el contenido recibido desde el navegador
-            n_lin = 1;
+            String[] peticion = obtenerPeticion(in);
+
             System.out.println(
-                    "\n\n================ INICIO PETICION =======================================\n" +
-                            n_lin + "- " + input);
+                    "\n\n================ INICIO PETICION =======================================\n" + peticion[0]);
 
             // we parse the request with a string tokenizer
-            StringTokenizer parse = new StringTokenizer(input);
+            StringTokenizer parse = new StringTokenizer(peticion[0]);
             String method = parse.nextToken().toUpperCase(); // we get the HTTP method of the client
             // we get file requested
             fileRequested = parse.nextToken().toLowerCase();
@@ -157,7 +149,7 @@ public class JavaHTTPServer implements Runnable {
                     out.println(); // blank line between headers and content, very important !
                     out.flush(); // flush character output stream buffer
 
-                    String campos = cogerCampo(in);
+                    String campos = peticion[peticion.length - 1];
                     String campo1 = campos.substring(campos.indexOf("1=") + 2, campos.indexOf("&"));
                     String campo2 = campos.substring(campos.indexOf("2=") + 2);
 
@@ -175,7 +167,9 @@ public class JavaHTTPServer implements Runnable {
                 }
 
             }
-            muestraRestoPeticion(in);
+            for (int i = 1; i < peticion.length; i++) {
+                System.out.println(peticion[i]);
+            }
             System.out.println("\n\n----- FIN PETICION ----\n");
 
         } catch (FileNotFoundException fnfe) {
@@ -203,24 +197,6 @@ public class JavaHTTPServer implements Runnable {
             }
         }
 
-    }
-
-    private String cogerCampo(BufferedReader in) throws IOException {
-        int car;
-        String campo = "";
-        int n_lin = 1;
-        while (in.ready()) {
-            car = in.read();
-            if (car == '\n') {
-                campo = "";
-                n_lin++;
-                System.out.print("\n" + n_lin + "- ");
-            } else {
-                campo += (char)car;
-                System.out.print((char) car);
-            }
-        }
-        return campo;
     }
 
     public static String reemplazar(String cadena, String busqueda, String reemplazo) {
@@ -277,19 +253,23 @@ public class JavaHTTPServer implements Runnable {
      *
      * @param input
      */
-    private void muestraRestoPeticion(BufferedReader in) throws IOException {
+    private String[] obtenerPeticion(BufferedReader in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(in.readLine());
         int car;
-        int n_lin = 1;
+        int nlinea = 1;
         // Leemos resto de líneas enviadas por el navegador
         while (in.ready()) {
             car = in.read();
             if (car == '\n') {
-                // Mostramos el contenido recibido desde el navegador
-                n_lin++;
-                System.out.print("\n" + n_lin + "- ");
+                sb.append("\n");
+                String s = nlinea + "- ";
+                sb.append(s);
+                nlinea++;
             } else {
-                System.out.print((char) car);
+                sb.append((char) car);
             }
         }
+        return sb.toString().split("\n");
     }
 }

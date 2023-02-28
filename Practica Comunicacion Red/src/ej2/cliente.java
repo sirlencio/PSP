@@ -61,7 +61,7 @@ public class cliente {
 
             enviarDatos(operador);
 
-            enviaResultados(operador);
+            obtieneResultados(operador);
         } else {
             System.out.println("El operador no es correcto.\n");
         }
@@ -119,7 +119,7 @@ public class cliente {
     /*
      * Obtiene y muestra los resultados del servidor.
      */
-    private static void enviaResultados(char operador) throws IOException {
+    private static void obtieneResultados(char operador) throws IOException {
         byte resultado = reader.readByte();
         long longitud = reader.readLong();
         byte[] informacion = reader.readNBytes((int) longitud);
@@ -135,7 +135,7 @@ public class cliente {
     }
 
     /*
-     * Crea un archivo con el nombre especificado y escribe en el el contenido
+     * Crea un archivo con el nombre especificado y escribe el contenido
      * recibido.
      */
     private static void copiarArchivo(byte[] informacion) throws IOException {

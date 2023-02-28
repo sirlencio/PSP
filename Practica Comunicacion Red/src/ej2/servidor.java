@@ -20,37 +20,25 @@ public class servidor {
     static byte[] informacion;
 
     public static void main(String[] args) {
-        try {
-            for (; ; ) {
-                conectarCliente();
+        for (; ; ) {
+            try (ServerSocket socketServidor = new ServerSocket(PUERTO)) {
+                Socket socketCliente = socketServidor.accept();
+                reader = new DataInputStream(new BufferedInputStream(socketCliente.getInputStream()));
+                writer = new DataOutputStream(new BufferedOutputStream(socketCliente.getOutputStream()));
+
+                char operador;
+                do {
+                    operador = operar();
+                } while (operador != 'F');
+
+                reader.close();
+                writer.close();
+                socketCliente.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
 
-    /*
-     * Realiza una conexion con un cliente, asigna el lector y escritor
-     * a ese cliente y procede a hacer las operaciones
-     */
-    private static void conectarCliente() throws IOException {
-        try (ServerSocket socketServidor = new ServerSocket(PUERTO)) {
-            Socket socketCliente = socketServidor.accept();
-            reader = new DataInputStream(new BufferedInputStream(socketCliente.getInputStream()));
-            writer = new DataOutputStream(new BufferedOutputStream(socketCliente.getOutputStream()));
-
-            // Operar con el cliente
-            char operador = ' ';
-            do {
-                operador = operar();
-            } while (operador != 'F');
-
-            reader.close();
-            writer.close();
-            socketCliente.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /*
@@ -67,6 +55,7 @@ public class servidor {
             listarFicheros();
         }
 
+        // Enviar resultados
         if (operador != 'F') {
             enviarResultados();
         }
@@ -166,11 +155,9 @@ public class servidor {
         String nombre = reader.readUTF();
         System.out.println("Cliente: " + nombre);
 
-        // Renombrar
         File nuevo = new File(nombre);
-        Boolean renombrado = fichero.renameTo(nuevo);
+        boolean renombrado = fichero.renameTo(nuevo);
 
-        // Colocar datos del resultado
         if (renombrado) {
             colocarDatos((byte) 0, FICH_RENOMBRADO);
         } else {

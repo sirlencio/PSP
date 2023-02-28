@@ -38,7 +38,6 @@ public class cliente {
      * Comprueba que el operador obtenido por teclado sea permitido y realiza su respectiva operacion
      */
     private static boolean obtenerOperador(Socket socket) throws IOException {
-        // Pedir operador
         System.out.print("Seleccione operador o comando (+,-,*,/, F, A): ");
         char operador = scan.nextLine().toUpperCase().charAt(0);
         System.out.println();
