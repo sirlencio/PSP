@@ -75,28 +75,14 @@ public class cliente {
             default -> {    //  Operar
                 enviarNumeros();
 
-                resultados();
+                System.out.println("===Respuesta del servidor===");
+                System.out.println("Nº Operacion: " + reader.readInt());
+                System.out.println("Resultado: " + reader.readLong());
+                System.out.println("Operacion realizada: " + reader.readUTF() + "\n");
 
                 return true;
             }
         }
-    }
-
-    /*
-     * Obtiene los resultados que envía el servidor y los imprime por pantalla
-     */
-    private static void resultados() throws IOException {
-        String noperacion = "Nº Operacion: " + reader.readInt();
-
-        String total = "Resultado: " + reader.readLong();
-
-        String rdo = "Operacion realizada: " + reader.readUTF();
-
-        // Mostrar resultados
-        System.out.println("===Respuesta del servidor===");
-        System.out.println(noperacion);
-        System.out.println(total);
-        System.out.println(rdo + "\n");
     }
 
     /*

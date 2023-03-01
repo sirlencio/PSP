@@ -16,7 +16,7 @@ public class cliente {
     public static void main(String[] args) {
         try (DatagramSocket socket = new DatagramSocket()) {
             System.out.println("- Cliente de operaciones matematicas -");
-            InetAddress ip = InetAddress.getByName(IP);
+
             do {
                 System.out.print("Seleccione operador o comando (+, -, *, /, F, A): ");
                 operador = scan.nextLine().toUpperCase().charAt(0);
@@ -24,15 +24,15 @@ public class cliente {
 
                 if (operador == '+' || operador == '-' || operador == '*' || operador == '/') {
                     guardarNumeros();
-                    enviarPaquete(socket, ip);
+                    enviarPaquete(socket);
                     recibirPaquete(socket);
                 } else if (operador == 'A') {
-                    enviarPaquete(socket, ip);
+                    enviarPaquete(socket);
                     socket.close();
                     System.out.println("** Servidor detenido **\n");
                     break;
                 } else {
-                    enviarPaquete(socket, ip);
+                    enviarPaquete(socket);
                     socket.close();
                     System.out.println("** Finalizada la conexion **\n");
                     break;
@@ -45,7 +45,8 @@ public class cliente {
 
     }
 
-    private static void enviarPaquete(DatagramSocket socket, InetAddress ip) throws IOException {
+    private static void enviarPaquete(DatagramSocket socket) throws IOException {
+        InetAddress ip = InetAddress.getByName(IP);
         ByteBuffer buffer = ByteBuffer.allocate(18);
         buffer.putChar(operador);
         buffer.putLong(n1);
