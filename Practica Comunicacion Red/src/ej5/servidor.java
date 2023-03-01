@@ -1,84 +1,67 @@
 package ej5;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.*;
 
 public class servidor {
+    public static void main(String[] args) throws IOException {
 
-    static final int PUERTO = 8000;
-    static int noperaciones = 1;
-    static DataInputStream reader;
-    static DataOutputStream writer;
-
-    public static void main(String[] args) {
         try {
-            char operador = ' ';
-            while (operador != 'A') { // Siempre que el cliente no devuelva la letra 'A', el servidor seguirá en ejecución
-                try (ServerSocket socketServidor = new ServerSocket(PUERTO)) { //El servidor atiende al puerto asignado
-                    Socket socketCliente = socketServidor.accept(); //El servidor acepta la conexion con el cliente
-                    reader = new DataInputStream(new BufferedInputStream(socketCliente.getInputStream()));
-                    writer = new DataOutputStream(new BufferedOutputStream(socketCliente.getOutputStream()));
+            //Creamos el socket del servidor y mandamos un mensaje al conectar
+            ServerSocket serverSocket = new ServerSocket(8000);
+            System.out.println("Servidor escuchando en el puerto 8000");
+            while (true) {
 
-                    do {
-                        operador = operar();
-                    } while (operador != 'F' && operador != 'A');
+                //Si todo ha ido bien aceptamos al cliente e indicamos que se ha conectado un cliente
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Cliente conectado");
 
-                    socketCliente.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                //Nuevamente el uso de estas clases para almacenar y generar una respuesta en funcion de la peticion del cliente
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+
+                //Array que almacena las palabras del juego
+                String[] secretWords = {"manzana", "platano", "melon", "naranja", "sandia", "uva", "pomelo", "fresa",
+                        "kiwi", "limon"};
+
+
+                //Mediante la clase random elegimos una palabra del array, la cual se debera adivinar
+                Random random = new Random();
+                int secretIndex = random.nextInt(secretWords.length);
+                String secretWord = secretWords[secretIndex];
+
+
+                out.println("Introduce una palabra:");
+                String inputLine;
+
+                //Mediante este array comprobamos las respuestas enviadas y generamos una respuesta en funcion de estas
+                while ((inputLine = in.readLine()) != null) {
+                    if (inputLine.equalsIgnoreCase(secretWord)) {
+                        out.println("Enhorabuena, has acertado!");
+
+                        clientSocket.close();
+                        break;
+                    } else if (inputLine.equalsIgnoreCase("salir")) {
+                        out.println("Oh, espero verte pronto, mas suerte la proxima");
+                        clientSocket.close();
+                        System.out.println("Cliente desconectado");
+                        break;
+                    } else {
+
+                        out.println("Incorrecto, prueba otra vez:");
+                    }
                 }
+                clientSocket.close();
+
             }
-            reader.close();
-            writer.close();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cierre conexion del cliente");
+
         }
-    }
-
-    /*
-     * Recibe el operador, los numeros y devuelve al cliente
-     * el resultado de esa operacion
-     */
-    private static char operar() throws IOException {
-        char operador = reader.readChar();
-        System.out.println("Cliente: " + operador);
-
-        if (operador == '+' || operador == '-' || operador == '*' || operador == '/') {
-            long n1 = reader.readLong();
-            long n2 = reader.readLong();
-
-            System.out.println("Cliente: " + n1);
-            System.out.println("Cliente: " + n2);
-
-            long rdo = calcular(operador, n1, n2);
-
-            String cadena = n1 + "" + operador + "" + n2 + " = " + rdo;
-
-            writer.writeInt(noperaciones);
-            writer.writeLong(rdo);
-            writer.writeUTF(cadena);
-            writer.flush();
-
-            System.out.println("Enviado: " + cadena);
-
-            noperaciones++;
-        }
-        return operador;
-    }
-
-    /*
-     * Realiza una operacion con un signo
-     * y dos numeros que hemos ingresado por parametro
-     */
-    private static long calcular(char operador, long n1, long n2) {
-        return switch (operador) {
-            case '+' -> n1 + n2;
-            case '-' -> n1 - n2;
-            case '*' -> n1 * n2;
-            case '/' -> n1 / n2;
-            default -> 0;
-        };
     }
 
 }
