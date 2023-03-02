@@ -11,13 +11,10 @@ public class servidor {
         try (ServerSocket socketServidor = new ServerSocket(PUERTO)) {
 
             for (; ; ) {
-                // Nueva conexion
                 Socket socketCliente = socketServidor.accept();
 
-                // Crear Thread
                 conexion conexion = new conexion(socketCliente);
 
-                // Lanzar Thread
                 conexion.start();
             }
         } catch (IOException e) {

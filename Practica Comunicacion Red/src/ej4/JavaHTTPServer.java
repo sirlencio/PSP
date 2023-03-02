@@ -137,7 +137,7 @@ public class JavaHTTPServer implements Runnable {
                     dataOut.write(fileData, 0, fileLength);
                     dataOut.flush();
                 }
-                if (method.equals("POST")) { // POST method so we return content
+               if (method.equals("POST")) { // POST method so we return content
                     byte[] fileData = readFileData(file, fileLength);
 
                     // send HTTP Headers

@@ -63,17 +63,6 @@ public class servidor {
         return operador;
     }
 
-    /*
-     * Envia los resultados grabados actualmente.
-     */
-    private static void enviarResultados() throws IOException {
-        writer.writeByte(resultado);
-        writer.writeLong(longitud);
-        writer.write(informacion);
-        writer.flush();
-
-        System.out.println("Enviado: " + resultado);
-    }
 
     /*
      * Recibe un nombre de archivo, comprueba que existe y opera con el.
@@ -124,6 +113,18 @@ public class servidor {
         resultado = rdo;
         longitud = flujo.length;
         informacion = flujo;
+    }
+
+    /*
+     * Envia los resultados grabados actualmente.
+     */
+    private static void enviarResultados() throws IOException {
+        writer.writeByte(resultado);
+        writer.writeLong(longitud);
+        writer.write(informacion);
+        writer.flush();
+
+        System.out.println("Enviado: " + resultado);
     }
 
     /*

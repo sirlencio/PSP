@@ -5,35 +5,54 @@ import java.net.*;
 import java.util.*;
 
 public class cliente {
-    public static void main(String[] args) throws IOException {
 
-        try {
-            //Creamos el socket para el cliente indicando el host y el puerto al que nos conectamos
-            Socket clientSocket = new Socket("localhost", 8000);
+    static final String IP = "127.0.0.1";
+    static final int PUERTO = 8000;
+    static Scanner scan = new Scanner(System.in);
+    static DataInputStream reader;
+    static DataOutputStream writer;
 
-            //Mandamos un mensaje informativo al cliente que se conecte
-            System.out.println("Bienvenido al juego de las adivinanzas.\nIntroduce salir para finalizar\nTematica: Frutas");
+    public static void main(String[] args) {
+        try (Socket socket = new Socket(IP, PUERTO)) {
+            System.out.println("- Bienvenido a adivina el numero -");
 
-            //creamos un objeto de las sigueintes clases que nos permitiran saber que informacion nos da el cliente
-            //Y mandar una respuesta en funcion de esta
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            //Inicia reader y writer
+            reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-            //Mediante el uso de la clase scanner almacenamos la informacion que introduzca el cliente por teclado
-            Scanner stdIn = new Scanner(System.in);
-            String userInput;
+            String respuesta;
+            System.out.print("1.- Facil (1 - 10)\n2.- Normal (1 - 50)\n3.- Dificil (1 - 100)\n");
+            int dificultad;
+            do {
+                System.out.print("Seleccione la dificultad: ");
+                dificultad = scan.nextInt();
+            } while (dificultad != 1 && dificultad != 2 && dificultad != 3);
 
-            //Mostramos dicha informacion
-            System.out.println(in.readLine());
+            writer.writeInt(dificultad);
+            writer.flush();
 
-            //Mediante un bucle que nos comprueba si lo que mandamos es diferente de null realice las peticiones
-            while ((userInput = stdIn.nextLine()) != null) {
-                out.println(userInput);
-                //Mostramos la respuesta del servidor
-                System.out.println("Server: " + in.readLine());
-            }
+            System.out.println("Ha escogido la dificultad " + dificultad);
+            do {
+                System.out.print("Introduzca un numero: ");
+                int guess = scan.nextInt();
+
+                writer.writeInt(guess);
+                writer.flush();
+
+                System.out.println(reader.readUTF());
+                respuesta = reader.readUTF();
+                System.out.println(respuesta);
+
+            } while (!respuesta.equals("Has perdido") && !respuesta.equals("Has ganado!"));
+
+            socket.close();
+            // Liberar recursos
+            reader.close();
+            writer.close();
+            scan.close();
         } catch (IOException e) {
-            System.out.println("Cierre conexion del servidor");
+            System.out.println("No se pudo conectar con el servidor.");
         }
     }
+
 }

@@ -2,66 +2,88 @@ package ej5;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Random;
 
 public class servidor {
-    public static void main(String[] args) throws IOException {
 
+    static final int PUERTO = 8000;
+    static DataInputStream reader;
+    static DataOutputStream writer;
+    static int intentos;
+    static int adivinar;
+
+    public static void main(String[] args) {
         try {
-            //Creamos el socket del servidor y mandamos un mensaje al conectar
-            ServerSocket serverSocket = new ServerSocket(8000);
-            System.out.println("Servidor escuchando en el puerto 8000");
-            while (true) {
+            int dificultad = 1;
+            while (dificultad != 0) {
+                try (ServerSocket socketServidor = new ServerSocket(PUERTO)) {
+                    Socket socketCliente = socketServidor.accept();
+                    System.out.println("-Cliente conectado-");
+                    reader = new DataInputStream(new BufferedInputStream(socketCliente.getInputStream()));
+                    writer = new DataOutputStream(new BufferedOutputStream(socketCliente.getOutputStream()));
 
-                //Si todo ha ido bien aceptamos al cliente e indicamos que se ha conectado un cliente
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Cliente conectado");
+                    dificultad = reader.readInt();
+                    System.out.println("Elegida dificultad " + dificultad);
+                    crearPartida(dificultad);
+                    do {
+                        int nrecibido = reader.readInt();
+                        String pista;
 
+                        if (nrecibido == adivinar) {
+                            writer.writeUTF("Te han sobrado " + intentos + " intentos");
+                            writer.writeUTF("Has ganado!");
+                            writer.flush();
+                            System.out.println("El cliente ha ganado la partida, desconectandolo...");
+                            break;
+                        } else if (nrecibido < adivinar) {
+                            pista = "El numero a adivinar es mas grande";
+                            intentos--;
+                        } else {
+                            pista = "El numero a adivinar es mas pequeño";
+                            intentos--;
+                        }
 
-                //Nuevamente el uso de estas clases para almacenar y generar una respuesta en funcion de la peticion del cliente
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        if (intentos == 0) {
+                            writer.writeUTF("Te quedan " + intentos + " intentos");
+                            writer.writeUTF("Has perdido");
+                            writer.flush();
+                            System.out.println("El cliente ha perdido la partida, desconectandolo...");
+                            break;
+                        } else {
+                            writer.writeUTF("Te quedan " + intentos + " intentos");
+                            writer.writeUTF(pista);
+                            writer.flush();
+                        }
 
-
-                //Array que almacena las palabras del juego
-                String[] secretWords = {"manzana", "platano", "melon", "naranja", "sandia", "uva", "pomelo", "fresa",
-                        "kiwi", "limon"};
-
-
-                //Mediante la clase random elegimos una palabra del array, la cual se debera adivinar
-                Random random = new Random();
-                int secretIndex = random.nextInt(secretWords.length);
-                String secretWord = secretWords[secretIndex];
-
-
-                out.println("Introduce una palabra:");
-                String inputLine;
-
-                //Mediante este array comprobamos las respuestas enviadas y generamos una respuesta en funcion de estas
-                while ((inputLine = in.readLine()) != null) {
-                    if (inputLine.equalsIgnoreCase(secretWord)) {
-                        out.println("Enhorabuena, has acertado!");
-
-                        clientSocket.close();
-                        break;
-                    } else if (inputLine.equalsIgnoreCase("salir")) {
-                        out.println("Oh, espero verte pronto, mas suerte la proxima");
-                        clientSocket.close();
-                        System.out.println("Cliente desconectado");
-                        break;
-                    } else {
-
-                        out.println("Incorrecto, prueba otra vez:");
-                    }
+                    } while (true);
+                    intentos = 5;
+                    socketCliente.close();
+                    System.out.println("-Cliente desconectado-");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                clientSocket.close();
-
             }
-
+            reader.close();
+            writer.close();
         } catch (IOException e) {
-            System.out.println("Cierre conexion del cliente");
-
+            e.printStackTrace();
         }
     }
+
+    private static void crearPartida(int dificultad) {
+        Random rand = new Random();
+        if (dificultad == 1) {
+            adivinar = rand.nextInt(10) + 1;
+            intentos = 4;
+        } else if (dificultad == 2) {
+            adivinar = rand.nextInt(50) + 1;
+            intentos = 6;
+        } else if (dificultad == 3) {
+            adivinar = rand.nextInt(100) + 1;
+            intentos = 7;
+        }
+        System.out.println("Elegido numero " + adivinar);
+    }
+
 
 }
