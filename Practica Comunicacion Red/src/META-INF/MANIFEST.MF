@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: ej1_1.servidor
+Main-Class: ej1_1.cliente
 
